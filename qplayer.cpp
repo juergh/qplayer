@@ -25,7 +25,7 @@ QPlayer::QPlayer(QWidget *parent)
 	/* Load the button images */
 	icon_prefix = "./icons/";
 	if (!fs::exists(icon_prefix.toStdString()))
-		icon_prefix = "/usr/share/qplayer/icons/";
+		icon_prefix = "/usr/lib/qplayer/icons/";
 	pixmap.load(icon_prefix + "prev_album.png");
 	ui.prev_album->setIcon(QIcon(pixmap));
 	pixmap.load(icon_prefix + "next_album.png");

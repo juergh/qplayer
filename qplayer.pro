@@ -1,8 +1,6 @@
 QT += multimedia \
       widgets
 
-#QMAKE_CXXFLAGS += -DLIBRARY_PATH="storage/music"
-
 LIBS += -lstdc++fs
 
 FORMS = qplayer.ui
@@ -17,3 +15,12 @@ SOURCES = album.cpp \
           main.cpp \
           qplayer.cpp \
           track.cpp
+
+# Install the qplayer binary
+target.path = /usr/bin/
+INSTALLS += target
+
+# Install the icons
+icons.path = /usr/lib/qplayer/icons/
+icons.files = icons/*.png
+INSTALLS += icons
