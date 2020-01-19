@@ -22,18 +22,25 @@ QPlayer::QPlayer(QWidget *parent)
 	/* Setup the UI */
 	ui.setupUi(this);
 
-	/* Load the button images */
+	/* Load the button images and assign shortcuts */
 	icon_prefix = "./icons/";
 	if (!fs::exists(icon_prefix.toStdString()))
 		icon_prefix = "/usr/lib/qplayer/icons/";
 	pixmap.load(icon_prefix + "prev_album.png");
 	ui.prev_album->setIcon(QIcon(pixmap));
+	ui.prev_album->setShortcut(QKeySequence("c"));
 	pixmap.load(icon_prefix + "next_album.png");
 	ui.next_album->setIcon(QIcon(pixmap));
+	ui.next_album->setShortcut(QKeySequence("m"));
 	pixmap.load(icon_prefix + "prev_track.png");
 	ui.prev_track->setIcon(QIcon(pixmap));
+	ui.prev_track->setShortcut(QKeySequence("v"));
 	pixmap.load(icon_prefix + "next_track.png");
 	ui.next_track->setIcon(QIcon(pixmap));
+	ui.next_track->setShortcut(QKeySequence("n"));
+
+	/* Play/pause shortcut */
+	ui.album->setShortcut(QKeySequence("b"));
 
 	/* Load the music library and set the current album */
 	storage_prefix = "./storage/";
