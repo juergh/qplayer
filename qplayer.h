@@ -27,7 +27,7 @@ private slots:
 	void on_next_album_clicked();
 	void on_prev_track_clicked();
 	void on_next_track_clicked();
-	void on_current_media_changed();
+	void current_media_changed();
 
 private:
 	Ui::QPlayer ui;

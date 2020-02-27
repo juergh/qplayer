@@ -21,7 +21,7 @@ QPlayer::QPlayer(QWidget *parent) :
 	player = new QMediaPlayer;
 	player->setVolume(100);
 	connect(player, &QMediaPlayer::currentMediaChanged, this,
-		&QPlayer::on_current_media_changed);
+		&QPlayer::current_media_changed);
 
 	/* Load the music library */
 	prefix = "./storage";
@@ -135,7 +135,7 @@ void QPlayer::on_next_track_clicked()
 	player->playlist()->next();
 }
 
-void QPlayer::on_current_media_changed()
+void QPlayer::current_media_changed()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
