@@ -17,8 +17,7 @@ Library::Library(QDir library_dir)
 	QDir album_dir;
 	Album *album;
 
-	qDebug().nospace() << __func__ << ": library: " <<	\
-		library_dir.absolutePath();
+	qDebug() << "library:" << library_dir.absolutePath();
 
 	/* Read the artists sorted by name */
 	artists = library_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot,
@@ -39,6 +38,13 @@ Library::Library(QDir library_dir)
 			album = new Album(artist_name, album_name, album_dir);
 			album_list.push_back(*album);
 		}
+	}
+
+	/* Add a dummy album if the list is empty (to prevent crashes) */
+	if (album_list.size() == 0) {
+		qDebug() << "no albums found";
+		album = new Album(QString(), QString(), QDir());
+		album_list.push_back(*album);
 	}
 
 	/* Set the current album */
