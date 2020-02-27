@@ -1,3 +1,9 @@
+/*
+ * qplayer.h
+ *
+ * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
+ */
+
 #include <QApplication>
 
 #include "qplayer.h"

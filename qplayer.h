@@ -1,13 +1,17 @@
+/*
+ * qplayer.h
+ *
+ * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
+ */
+
 #ifndef QPLAYER_H
 #define QPLAYER_H
 
-#include <string>
-
 #include <QMediaPlayer>
+#include <QMediaPlaylist>
 
 #include "album.h"
 #include "library.h"
-#include "track.h"
 #include "ui_qplayer.h"
 
 class QPlayer : public QWidget
@@ -23,16 +27,15 @@ private slots:
 	void on_next_album_clicked();
 	void on_prev_track_clicked();
 	void on_next_track_clicked();
+	void on_current_media_changed();
 
 private:
 	Ui::QPlayer ui;
-	Library *library;
-	std::vector<Album>::iterator album;
-	std::vector<Track>::iterator track;
-	QMediaPlayer *player;
+	Library *library = nullptr;
+	QMediaPlayer *player = nullptr;
 
-	void set_album(std::vector<Album>::iterator iter);
-	void set_track(std::vector<Track>::iterator iter);
+	void update_album();
+	void update_track();
 };
 
 #endif // QPLAYER_H

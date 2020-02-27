@@ -1,20 +1,30 @@
+/*
+ * library.h
+ *
+ * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
+ */
+
 #ifndef LIBRARY_H
 #define LIBRARY_H
 
-#include <string>
-#include <vector>
+#include <QDir>
 
-#include "album.h"
+#include <vector>
 
 class Library
 {
 public:
-	explicit Library(std::string library_path);
+	explicit Library(QDir library_dir);
 
-	std::string path;
-	std::vector<Album> albums;
+	Album album(int offset=0);
+	void next_album();
+	void prev_album();
 
-	std::vector<Album>::iterator next_album(std::vector<Album>::iterator iter, bool reverse=false);
+private:
+	std::vector<Album> album_list;
+	std::vector<Album>::iterator album_iter;
+	std::vector<Album>::iterator next(std::vector<Album>::iterator iter,
+					  int step);
 };
 
 #endif // LIBRARY_H

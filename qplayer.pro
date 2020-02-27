@@ -1,20 +1,16 @@
 QT += multimedia \
       widgets
 
-LIBS += -lstdc++fs
-
 FORMS = qplayer.ui
 
 HEADERS = album.h \
           library.h \
-          qplayer.h \
-          track.h
+          qplayer.h
 
-SOURCES = album.cpp \
+SOURCES = main.cpp \
+          album.cpp \
           library.cpp \
-          main.cpp \
-          qplayer.cpp \
-          track.cpp
+          qplayer.cpp
 
 # Install the qplayer binary
 target.path = /usr/bin/

@@ -1,27 +1,26 @@
+/*
+ * album.h
+ *
+ * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
+ */
+
 #ifndef ALBUM_H
 #define ALBUM_H
 
-#include <string>
-#include <vector>
-
+#include <QDir>
+#include <QMediaPlaylist>
 #include <QPixmap>
-
-#include "track.h"
 
 class Album
 {
 public:
-	explicit Album(std::string album_path);
+	explicit Album(QString artist_name, QString album_name,
+		       QDir album_dir);
 
-	std::string path;
-	std::string artist;
-	std::string name;
+	QString artist;
+	QString name;
 	QPixmap cover;
-	std::vector<Track> tracks;
-
-	std::vector<Track>::iterator next_track(std::vector<Track>::iterator iter, bool reverse=false);
+	QMediaPlaylist *playlist = nullptr;
 };
-
-bool compare_albums(Album a1, Album a2);
 
 #endif // ALBUM_H

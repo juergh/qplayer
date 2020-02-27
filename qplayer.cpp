@@ -1,107 +1,97 @@
-#include <experimental/filesystem>
-#include <iostream>
+/*
+ * qplayer.cpp
+ *
+ * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
+ */
 
+#include "album.h"
 #include "library.h"
 #include "qplayer.h"
 
-namespace fs = std::experimental::filesystem;
-
-QPlayer::QPlayer(QWidget *parent)
-        : QWidget(parent)
+QPlayer::QPlayer(QWidget *parent) :
+	QWidget(parent)
 {
 	QPixmap pixmap;
-	QString icon_prefix;
-	std::string storage_prefix;
-
-	std::cout << __func__ << "\n";
-
-	/* Create the player */
-	player = new QMediaPlayer;
-	player->setVolume(50);
+	QDir prefix;
 
 	/* Setup the UI */
 	ui.setupUi(this);
 
-	/* Load the button images and assign shortcuts */
-	icon_prefix = "./icons/";
-	if (!fs::exists(icon_prefix.toStdString()))
-		icon_prefix = "/usr/lib/qplayer/icons/";
-	pixmap.load(icon_prefix + "prev_album.png");
+	/* Create the player */
+	player = new QMediaPlayer;
+	player->setVolume(100);
+	connect(player, &QMediaPlayer::currentMediaChanged, this,
+		&QPlayer::on_current_media_changed);
+
+	/* Load the music library */
+	prefix = "./storage";
+	if (!prefix.exists())
+		prefix = "/storage";
+	library = new Library(prefix.absolutePath() + "/music");
+
+	/* Load the button images */
+	prefix = "./icons";
+	if (!prefix.exists())
+		prefix = "/usr/lib/qplayer/icons";
+	pixmap.load(prefix.absolutePath() + "/prev_album.png");
 	ui.prev_album->setIcon(QIcon(pixmap));
-	ui.prev_album->setShortcut(QKeySequence("c"));
-	pixmap.load(icon_prefix + "next_album.png");
+	pixmap.load(prefix.absolutePath() + "/next_album.png");
 	ui.next_album->setIcon(QIcon(pixmap));
-	ui.next_album->setShortcut(QKeySequence("m"));
-	pixmap.load(icon_prefix + "prev_track.png");
+	pixmap.load(prefix.absolutePath() + "/prev_track.png");
 	ui.prev_track->setIcon(QIcon(pixmap));
-	ui.prev_track->setShortcut(QKeySequence("v"));
-	pixmap.load(icon_prefix + "next_track.png");
+	pixmap.load(prefix.absolutePath() + "/next_track.png");
 	ui.next_track->setIcon(QIcon(pixmap));
-	ui.next_track->setShortcut(QKeySequence("n"));
 
-	/* Play/pause shortcut */
+	/* Set the keyboard shortcuts */
+	ui.prev_album->setShortcut(QKeySequence("c"));
+	ui.prev_track->setShortcut(QKeySequence("v"));
 	ui.album->setShortcut(QKeySequence("b"));
+	ui.next_track->setShortcut(QKeySequence("n"));
+	ui.next_album->setShortcut(QKeySequence("m"));
 
-	/* Load the music library and set the current album */
-	storage_prefix = "./storage/";
-	if (!fs::exists(storage_prefix))
-		storage_prefix = "/storage/";
-	library = new Library(storage_prefix + "music");
-	set_album(library->albums.begin());
+	/* Set the current album and the display */
+	update_album();
 }
 
-void QPlayer::set_album(std::vector<Album>::iterator iter)
+void QPlayer::update_album()
 {
-	std::vector<Album>::iterator thumb;
+	Album album = library->album();
 
-	std::cout << __func__ << "\n";
-
-	/* Stop playing when we switch albums */
+	/* Set the playlist */
 	player->stop();
+	player->setPlaylist(album.playlist);
+	player->playlist()->setCurrentIndex(0);
+	player->playlist()->setPlaybackMode(QMediaPlaylist::Sequential);
 
-	/* Set the current album and track */
-	album = iter;
-	set_track(album->tracks.begin());
+	/* Set the current album artist and name */
+	ui.artist_label->setText(album.artist);
+	ui.album_label->setText(album.name);
 
-	/* Update the image and thumbnail of the current album */
-	ui.album->setIcon(album->cover);
-	ui.album_thumbnail->setPixmap(album->cover);
+	/* Set the current album image and thumbnail */
+	ui.album->setIcon(album.cover);
+	ui.album_thumbnail->setPixmap(album.cover);
 
-	/* Update the album artist and name */
-	ui.artist_label->setText(QString::fromStdString(album->artist));
-	ui.album_label->setText(QString::fromStdString(album->name));
-
-	/* Update the previous and next album thumbnails */
-	thumb = library->next_album(album);
-	ui.album_thumbnail_next1->setPixmap(thumb->cover);
-	thumb = library->next_album(thumb);
-	ui.album_thumbnail_next2->setPixmap(thumb->cover);
-	thumb = library->next_album(album, true);
-	ui.album_thumbnail_prev1->setPixmap(thumb->cover);
-	thumb = library->next_album(thumb, true);
-	ui.album_thumbnail_prev2->setPixmap(thumb->cover);
+	/* Set the previous and next album thumbnails */
+	ui.album_thumbnail_next1->setPixmap(library->album(-1).cover);
+	ui.album_thumbnail_next2->setPixmap(library->album(-2).cover);
+	ui.album_thumbnail_prev1->setPixmap(library->album(+1).cover);
+	ui.album_thumbnail_prev2->setPixmap(library->album(+2).cover);
 }
 
-void QPlayer::set_track(std::vector<Track>::iterator iter)
+void QPlayer::update_track()
 {
-	bool playing = false;
+	QUrl track_url;
+	QString track_name;
 
-	/* Are we currently playing a track? */
-	if (player->state() == QMediaPlayer::PlayingState)
-		playing = true;
-
-	track = iter;
-
-	ui.track_label->setText(QString::fromStdString(track->title));
-	player->setMedia(QUrl::fromLocalFile(QString::fromStdString(track->path)));
-
-	if (playing)
-		player->play();
+	track_url = player->playlist()->currentMedia().canonicalUrl();
+	track_name = QFileInfo(track_url.path()).baseName();
+	ui.track_label->setText(track_name);
 }
 
 void QPlayer::on_album_clicked()
 {
-	std::cout << __func__ << "\n";
+	qDebug().nospace() << "qplayer::" << __func__;
+
 	if (player->state() == QMediaPlayer::PlayingState)
 		player->pause();
 	else
@@ -110,24 +100,44 @@ void QPlayer::on_album_clicked()
 
 void QPlayer::on_prev_album_clicked()
 {
-	std::cout << __func__ << "\n";
-	set_album(library->next_album(album, true));
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	library->prev_album();
+	update_album();
 }
 
 void QPlayer::on_next_album_clicked()
 {
-	std::cout << __func__ << "\n";
-	set_album(library->next_album(album));
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	library->next_album();
+	update_album();
 }
 
 void QPlayer::on_prev_track_clicked()
 {
-	std::cout << __func__ << "\n";
-	set_track(album->next_track(track, true));
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	if (player->playlist()->currentIndex() == 0)
+		return;
+
+	player->playlist()->previous();
 }
 
 void QPlayer::on_next_track_clicked()
 {
-	std::cout << __func__ << "\n";
-	set_track(album->next_track(track));
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	if (player->playlist()->currentIndex() ==
+	    player->playlist()->mediaCount() - 1)
+		return;
+
+	player->playlist()->next();
+}
+
+void QPlayer::on_current_media_changed()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	update_track();
 }

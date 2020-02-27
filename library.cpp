@@ -1,65 +1,81 @@
-#include <algorithm>
-#include <iostream>    // for cout
-#include <experimental/filesystem>
-#include <vector>
+/*
+ * library.cpp
+ *
+ * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
+ */
+
+#include <QDebug>
 
 #include "album.h"
 #include "library.h"
 
-namespace fs = std::experimental::filesystem;
-
-Library::Library(std::string library_path)
+Library::Library(QDir library_dir)
 {
+	QStringList artists;
+	QDir artist_dir;
+	QStringList albums;
+	QDir album_dir;
 	Album *album;
-	std::string artist_name;
-	std::string album_name;
 
-	std::cout << __func__ << "\n";
+	qDebug().nospace() << __func__ << ": library: " <<	\
+		library_dir.absolutePath();
 
-	if (!fs::is_directory(library_path)) {
-		return;
-	}
+	/* Read the artists sorted by name */
+	artists = library_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot,
+					QDir::Name);
 
-	/* The absolute path to the library */
-	path = fs::absolute(library_path);
+	/* Loop over all artists */
+	for (const auto& artist_name : artists) {
+		/* Read the albums sorted by name */
+		artist_dir = library_dir.absolutePath() + "/" + artist_name;
+		albums = artist_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot,
+					      QDir::Name);
 
-	/* Iterate over the artists */
-	for (const auto & artist_iter : fs::directory_iterator(path)) {
-		if (!fs::is_directory(artist_iter))
-			continue;
-		artist_name = artist_iter.path().filename();
+		/* Loop over all albums */
+		for (const auto& album_name : albums) {
+			album_dir = artist_dir.absolutePath() + "/" + album_name;
 
-		/* Iterate over the albums */
-		for (const auto & album_iter : fs::directory_iterator(artist_iter.path())) {
-			if (!fs::is_directory(album_iter))
-				continue;
-			album_name = album_iter.path().filename();
-
-			/* Create the album */
-			album = new Album(fs::absolute(album_iter.path()));
-			album->artist = artist_name;
-			album->name = album_name;
-
-			/* Push the album to the list */
-			albums.push_back(*album);
+			/* Create the album and add it to the playlist */
+			album = new Album(artist_name, album_name, album_dir);
+			album_list.push_back(*album);
 		}
 	}
 
-	/* Sort the albums */
-	std::sort(albums.begin(), albums.end(), compare_albums);
+	/* Set the current album */
+	album_iter = album_list.begin();
 }
 
-std::vector<Album>::iterator Library::next_album(std::vector<Album>::iterator iter, bool reverse)
+Album Library::album(int offset)
 {
-	if (reverse) {
-		if (iter == albums.begin())
-			iter = albums.end();
-		std::advance(iter, -1);
-	} else {
-		std::advance(iter, 1);
-		if (iter == albums.end())
-			iter = albums.begin();
-	}
+	return *next(album_iter, offset);
+}
+
+void Library::next_album()
+{
+	album_iter = next(album_iter, 1);
+}
+
+void Library::prev_album()
+{
+	album_iter = next(album_iter, -1);
+}
+
+std::vector<Album>::iterator Library::next(std::vector<Album>::iterator iter,
+					   int step)
+{
+	if (step == 0)
+		return iter;
+
+	for (int i = 0; i < abs(step); i++)
+		if (step < 0) {
+			if (iter == album_list.begin())
+				iter = album_list.end();
+			std::advance(iter, -1);
+		} else {
+			std::advance(iter, 1);
+			if (iter == album_list.end())
+				iter = album_list.begin();
+		}
 
 	return iter;
 }
