@@ -43,11 +43,23 @@ QPlayer::QPlayer(QWidget *parent) :
 	ui.next_track->setIcon(QIcon(pixmap));
 
 	/* Set the keyboard shortcuts */
-	ui.prev_album->setShortcut(QKeySequence("c"));
+	ui.prev_album->setShortcut(QKeySequence(Qt::Key_Left));
 	ui.prev_track->setShortcut(QKeySequence("v"));
-	ui.album->setShortcut(QKeySequence("b"));
+	ui.album->setShortcut(QKeySequence(Qt::Key_Space));
 	ui.next_track->setShortcut(QKeySequence("n"));
-	ui.next_album->setShortcut(QKeySequence("m"));
+	ui.next_album->setShortcut(QKeySequence(Qt::Key_Right));
+
+	/* Set the volume up keystroke handler */
+	volume_up = new QShortcut(this);
+	volume_up->setKey(Qt::Key_Up);
+	connect(volume_up, SIGNAL(activated()), this,
+		SLOT(volume_up_pressed()));
+
+	/* Set the volume down keystroke handler */
+	volume_down = new QShortcut(this);
+	volume_down->setKey(Qt::Key_Down);
+	connect(volume_down, SIGNAL(activated()), this,
+		SLOT(volume_down_pressed()));
 
 	/* Set the current album and the display */
 	update_album();
@@ -140,4 +152,32 @@ void QPlayer::current_media_changed()
 	qDebug().nospace() << "qplayer::" << __func__;
 
 	update_track();
+}
+
+void QPlayer::volume_up_pressed()
+{
+	int vol;
+
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	vol = player->volume() + 5;
+	if (vol > 100)
+		vol = 100;
+	qDebug().nospace() << "qplayer:: vol=" << vol;
+
+	player->setVolume(vol);
+}
+
+void QPlayer::volume_down_pressed()
+{
+	int vol;
+
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	vol = player->volume() - 5;
+	if (vol < 0)
+		vol = 0;
+	qDebug().nospace() << "qplayer:: vol=" << vol;
+
+	player->setVolume(vol);
 }

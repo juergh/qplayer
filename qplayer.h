@@ -9,6 +9,7 @@
 
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
+#include <QShortcut>
 
 #include "album.h"
 #include "library.h"
@@ -28,11 +29,15 @@ private slots:
 	void on_prev_track_clicked();
 	void on_next_track_clicked();
 	void current_media_changed();
+	void volume_up_pressed();
+	void volume_down_pressed();
 
 private:
 	Ui::QPlayer ui;
 	Library *library = nullptr;
 	QMediaPlayer *player = nullptr;
+	QShortcut *volume_up = nullptr;
+	QShortcut *volume_down = nullptr;
 
 	void update_album();
 	void update_track();
