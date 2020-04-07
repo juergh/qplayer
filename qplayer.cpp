@@ -46,9 +46,9 @@ QPlayer::QPlayer(QWidget *parent) :
 
 	/* Set the keyboard shortcuts */
 	ui.prev_album->setShortcut(QKeySequence(Qt::Key_Left));
-	ui.prev_track->setShortcut(QKeySequence("v"));
+	ui.prev_track->setShortcut(QKeySequence(Qt::Key_Less));
 	ui.album->setShortcut(QKeySequence(Qt::Key_Space));
-	ui.next_track->setShortcut(QKeySequence("n"));
+	ui.next_track->setShortcut(QKeySequence(Qt::Key_Greater));
 	ui.next_album->setShortcut(QKeySequence(Qt::Key_Right));
 
 	/* Set the volume up keystroke handler */
