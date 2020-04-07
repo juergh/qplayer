@@ -132,6 +132,7 @@ border-style: solid;</string>
    </property>
    <property name="font">
     <font>
+     <family>Cantarell</family>
      <pointsize>20</pointsize>
      <weight>75</weight>
      <italic>false</italic>
@@ -140,8 +141,7 @@ border-style: solid;</string>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(204, 0, 0);
-</string>
+    <string notr="true">color: rgb(204, 0, 0);</string>
    </property>
    <property name="text">
     <string/>
@@ -149,11 +149,8 @@ border-style: solid;</string>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
-   <property name="margin">
-    <number>0</number>
-   </property>
    <property name="indent">
-    <number>-1</number>
+    <number>0</number>
    </property>
   </widget>
   <widget class="QLabel" name="album_label">
@@ -167,6 +164,7 @@ border-style: solid;</string>
    </property>
    <property name="font">
     <font>
+     <family>Cantarell</family>
      <pointsize>20</pointsize>
      <weight>75</weight>
      <italic>false</italic>
@@ -175,14 +173,16 @@ border-style: solid;</string>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(204, 0, 0);
-</string>
+    <string notr="true">color: rgb(204, 0, 0);</string>
    </property>
    <property name="text">
     <string/>
    </property>
    <property name="alignment">
-    <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+   <property name="indent">
+    <number>0</number>
    </property>
   </widget>
   <widget class="QPushButton" name="prev_album">
@@ -267,6 +267,7 @@ border: none;</string>
    </property>
    <property name="font">
     <font>
+     <family>Cantarell</family>
      <pointsize>20</pointsize>
      <weight>75</weight>
      <italic>false</italic>
@@ -281,7 +282,10 @@ border: none;</string>
     <string/>
    </property>
    <property name="alignment">
-    <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+   <property name="indent">
+    <number>0</number>
    </property>
   </widget>
   <widget class="QPushButton" name="prev_track">
