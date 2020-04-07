@@ -38,6 +38,7 @@ private:
 	QMediaPlayer *player = nullptr;
 	QShortcut *volume_up = nullptr;
 	QShortcut *volume_down = nullptr;
+	int volume = 20;
 
 	void update_album();
 	void update_track();

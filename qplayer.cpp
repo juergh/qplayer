@@ -4,6 +4,8 @@
  * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
  */
 
+#include <cmath>
+
 #include "album.h"
 #include "library.h"
 #include "qplayer.h"
@@ -19,7 +21,7 @@ QPlayer::QPlayer(QWidget *parent) :
 
 	/* Create the player */
 	player = new QMediaPlayer;
-	player->setVolume(100);
+	player->setVolume(volume);
 	connect(player, &QMediaPlayer::currentMediaChanged, this,
 		&QPlayer::current_media_changed);
 
@@ -154,30 +156,31 @@ void QPlayer::current_media_changed()
 	update_track();
 }
 
+int volume_lin2log(int value)
+{
+	return std::round((100 *
+			   (std::exp((float)value / 100.0) - 1) /
+			   (std::exp(1.0) - 1)));
+}
+
 void QPlayer::volume_up_pressed()
 {
-	int vol;
-
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	vol = player->volume() + 5;
-	if (vol > 100)
-		vol = 100;
-	qDebug().nospace() << "qplayer:: vol=" << vol;
+	volume = volume + 5;
+	if (volume > 100)
+		volume = 100;
 
-	player->setVolume(vol);
+	player->setVolume(volume_lin2log(volume));
 }
 
 void QPlayer::volume_down_pressed()
 {
-	int vol;
-
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	vol = player->volume() - 5;
-	if (vol < 0)
-		vol = 0;
-	qDebug().nospace() << "qplayer:: vol=" << vol;
+	volume = volume - 5;
+	if (volume < 0)
+		volume = 0;
 
-	player->setVolume(vol);
+	player->setVolume(volume_lin2log(volume));
 }
