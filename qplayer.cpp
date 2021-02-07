@@ -97,7 +97,7 @@ void QPlayer::update_track()
 	QUrl track_url;
 	QString track_name;
 
-	track_url = player->playlist()->currentMedia().canonicalUrl();
+	track_url = player->playlist()->currentMedia().request().url();
 	track_name = QFileInfo(track_url.path()).baseName();
 	ui.track_label->setText(track_name);
 }
