@@ -26,15 +26,15 @@ QPlayer::QPlayer(QWidget *parent) :
 		&QPlayer::current_media_changed);
 
 	/* Load the music library */
-	prefix = "./storage";
+	prefix.setPath("./storage");
 	if (!prefix.exists())
-		prefix = "/storage";
+		prefix.setPath("/storage");
 	library = new Library(prefix.absolutePath() + "/music");
 
 	/* Load the button images */
-	prefix = "./icons";
+	prefix.setPath("./icons");
 	if (!prefix.exists())
-		prefix = "/usr/lib/qplayer/icons";
+		prefix.setPath("/usr/lib/qplayer/icons");
 	pixmap.load(prefix.absolutePath() + "/prev_album.png");
 	ui.prev_album->setIcon(QIcon(pixmap));
 	pixmap.load(prefix.absolutePath() + "/next_album.png");

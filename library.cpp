@@ -26,13 +26,15 @@ Library::Library(QDir library_dir)
 	/* Loop over all artists */
 	for (const auto& artist_name : artists) {
 		/* Read the albums sorted by name */
-		artist_dir = library_dir.absolutePath() + "/" + artist_name;
+		artist_dir.setPath(library_dir.absolutePath() + "/" +
+				   artist_name);
 		albums = artist_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot,
 					      QDir::Name);
 
 		/* Loop over all albums */
 		for (const auto& album_name : albums) {
-			album_dir = artist_dir.absolutePath() + "/" + album_name;
+			album_dir.setPath(artist_dir.absolutePath() + "/" +
+					  album_name);
 
 			/* Create the album and add it to the playlist */
 			album = new Album(artist_name, album_name, album_dir);
