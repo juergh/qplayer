@@ -21,7 +21,11 @@ QPlayer::QPlayer(QWidget *parent) :
 
 	/* Create the player */
 	player = new QMediaPlayer;
+#ifdef RASPI_KIDZ
+	player->setVolume(100);
+#else
 	player->setVolume(volume);
+#endif
 	connect(player, &QMediaPlayer::currentMediaChanged, this,
 		&QPlayer::current_media_changed);
 
@@ -44,6 +48,7 @@ QPlayer::QPlayer(QWidget *parent) :
 	pixmap.load(prefix.absolutePath() + "/next_track.png");
 	ui.next_track->setIcon(QIcon(pixmap));
 
+#ifndef RASPI_KIDZ
 	/* Set the keyboard shortcuts */
 	ui.prev_album->setShortcut(QKeySequence(Qt::Key_Left));
 	ui.prev_track->setShortcut(QKeySequence(Qt::Key_Less));
@@ -62,6 +67,7 @@ QPlayer::QPlayer(QWidget *parent) :
 	volume_down->setKey(Qt::Key_Down);
 	connect(volume_down, SIGNAL(activated()), this,
 		SLOT(volume_down_pressed()));
+#endif
 
 	/* Set the current album and the display */
 	update_album();
@@ -156,6 +162,7 @@ void QPlayer::current_media_changed()
 	update_track();
 }
 
+#ifndef RASPI_KIDZ
 int volume_lin2log(int value)
 {
 	return std::round((100 *
@@ -184,3 +191,4 @@ void QPlayer::volume_down_pressed()
 
 	player->setVolume(volume_lin2log(volume));
 }
+#endif
