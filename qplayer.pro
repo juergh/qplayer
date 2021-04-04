@@ -4,12 +4,12 @@ QT += multimedia \
 FORMS = qplayer.ui
 
 HEADERS = album.h \
-          library.h \
+          collection.h \
           qplayer.h
 
 SOURCES = main.cpp \
           album.cpp \
-          library.cpp \
+          collection.cpp \
           qplayer.cpp
 
 # Install the qplayer binary

@@ -7,7 +7,7 @@
 #include <cmath>
 
 #include "album.h"
-#include "library.h"
+#include "collection.h"
 #include "qplayer.h"
 
 QPlayer::QPlayer(QWidget *parent) :
@@ -29,11 +29,11 @@ QPlayer::QPlayer(QWidget *parent) :
 	connect(player, &QMediaPlayer::currentMediaChanged, this,
 		&QPlayer::current_media_changed);
 
-	/* Load the music library */
+	/* Load the music collection */
 	prefix.setPath("./storage");
 	if (!prefix.exists())
 		prefix.setPath("/storage");
-	library = new Library(prefix.absolutePath() + "/music");
+	collection = new Collection(prefix.absolutePath() + "/music");
 
 	/* Load the button images */
 	prefix.setPath("./icons");
@@ -75,7 +75,7 @@ QPlayer::QPlayer(QWidget *parent) :
 
 void QPlayer::update_album()
 {
-	Album album = library->album();
+	Album album = collection->album();
 
 	/* Set the playlist */
 	player->stop();
@@ -92,10 +92,10 @@ void QPlayer::update_album()
 	ui.album_thumbnail->setPixmap(album.cover);
 
 	/* Set the previous and next album thumbnails */
-	ui.album_thumbnail_next1->setPixmap(library->album(-1).cover);
-	ui.album_thumbnail_next2->setPixmap(library->album(-2).cover);
-	ui.album_thumbnail_prev1->setPixmap(library->album(+1).cover);
-	ui.album_thumbnail_prev2->setPixmap(library->album(+2).cover);
+	ui.album_thumbnail_next1->setPixmap(collection->album(-1).cover);
+	ui.album_thumbnail_next2->setPixmap(collection->album(-2).cover);
+	ui.album_thumbnail_prev1->setPixmap(collection->album(+1).cover);
+	ui.album_thumbnail_prev2->setPixmap(collection->album(+2).cover);
 }
 
 void QPlayer::update_track()
@@ -122,7 +122,7 @@ void QPlayer::on_prev_album_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	library->prev_album();
+	collection->prev_album();
 	update_album();
 }
 
@@ -130,7 +130,7 @@ void QPlayer::on_next_album_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	library->next_album();
+	collection->next_album();
 	update_album();
 }
 

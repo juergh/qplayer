@@ -1,5 +1,5 @@
 /*
- * library.cpp
+ * collection.cpp
  *
  * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
  */
@@ -7,9 +7,9 @@
 #include <QDebug>
 
 #include "album.h"
-#include "library.h"
+#include "collection.h"
 
-Library::Library(QDir library_dir)
+Collection::Collection(QDir collection_dir)
 {
 	QStringList artists;
 	QDir artist_dir;
@@ -17,16 +17,16 @@ Library::Library(QDir library_dir)
 	QDir album_dir;
 	Album *album;
 
-	qDebug() << "library:" << library_dir.absolutePath();
+	qDebug() << "collection:" << collection_dir.absolutePath();
 
 	/* Read the artists sorted by name */
-	artists = library_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot,
+	artists = collection_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot,
 					QDir::Name);
 
 	/* Loop over all artists */
 	for (const auto& artist_name : artists) {
 		/* Read the albums sorted by name */
-		artist_dir.setPath(library_dir.absolutePath() + "/" +
+		artist_dir.setPath(collection_dir.absolutePath() + "/" +
 				   artist_name);
 		albums = artist_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot,
 					      QDir::Name);
@@ -53,22 +53,22 @@ Library::Library(QDir library_dir)
 	album_iter = album_list.begin();
 }
 
-Album Library::album(int offset)
+Album Collection::album(int offset)
 {
 	return *next(album_iter, offset);
 }
 
-void Library::next_album()
+void Collection::next_album()
 {
 	album_iter = next(album_iter, 1);
 }
 
-void Library::prev_album()
+void Collection::prev_album()
 {
 	album_iter = next(album_iter, -1);
 }
 
-std::vector<Album>::iterator Library::next(std::vector<Album>::iterator iter,
+std::vector<Album>::iterator Collection::next(std::vector<Album>::iterator iter,
 					   int step)
 {
 	if (step == 0)

@@ -1,20 +1,20 @@
 /*
- * library.h
+ * collection.h
  *
  * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
  */
 
-#ifndef LIBRARY_H
-#define LIBRARY_H
+#ifndef COLLECTION_H
+#define COLLECTION_H
 
 #include <QDir>
 
 #include <vector>
 
-class Library
+class Collection
 {
 public:
-	explicit Library(QDir library_dir);
+	explicit Collection(QDir collection_dir);
 
 	Album album(int offset=0);
 	void next_album();
@@ -27,4 +27,4 @@ private:
 					  int step);
 };
 
-#endif // LIBRARY_H
+#endif // COLLECTION_H

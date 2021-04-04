@@ -14,7 +14,7 @@
 #include <QShortcut>
 
 #include "album.h"
-#include "library.h"
+#include "collection.h"
 #include "ui_qplayer.h"
 
 class QPlayer : public QWidget
@@ -38,7 +38,7 @@ private slots:
 
 private:
 	Ui::QPlayer ui;
-	Library *library = nullptr;
+	Collection *collection = nullptr;
 	QMediaPlayer *player = nullptr;
 #ifndef RASPI_KIDZ
 	QShortcut *volume_up = nullptr;
