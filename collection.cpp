@@ -41,11 +41,8 @@ Collection::Collection(QDir collection_dir)
 		}
 	}
 
-	/* Add a dummy album if the list is empty (to prevent crashes) */
 	if (!first) {
 		qDebug() << "no albums found";
-		//album = new Album(QString(), QString(), QDir());
-		//add_album(album);
 	}
 }
 

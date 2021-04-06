@@ -77,6 +77,9 @@ void QPlayer::update_album(Album *album)
 {
 	Album *next1, *next2, *prev1, *prev2;
 
+	if (!album)
+		return;
+
 	/* Set the playlist */
 	player->stop();
 	player->setPlaylist(album->playlist);
@@ -106,6 +109,9 @@ void QPlayer::update_track()
 {
 	QUrl track_url;
 	QString track_name;
+
+	if (!player->playlist())
+		return;
 
 	track_url = player->playlist()->currentMedia().request().url();
 	track_name = QFileInfo(track_url.path()).baseName();
@@ -140,7 +146,7 @@ void QPlayer::on_prev_track_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	if (player->playlist()->currentIndex() == 0)
+	if (!player->playlist() || (player->playlist()->currentIndex() == 0))
 		return;
 
 	player->playlist()->previous();
@@ -150,8 +156,8 @@ void QPlayer::on_next_track_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	if (player->playlist()->currentIndex() ==
-	    player->playlist()->mediaCount() - 1)
+	if (!player->playlist() || (player->playlist()->currentIndex() ==
+				    player->playlist()->mediaCount() - 1))
 		return;
 
 	player->playlist()->next();
