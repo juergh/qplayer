@@ -69,33 +69,37 @@ QPlayer::QPlayer(QWidget *parent) :
 		SLOT(volume_down_pressed()));
 #endif
 
-	/* Set the current album and the display */
-	update_album();
+	/* Set the first album and update the display */
+	update_album(collection->first_album());
 }
 
-void QPlayer::update_album()
+void QPlayer::update_album(Album *album)
 {
-	Album album = collection->album();
+	Album *next1, *next2, *prev1, *prev2;
 
 	/* Set the playlist */
 	player->stop();
-	player->setPlaylist(album.playlist);
+	player->setPlaylist(album->playlist);
 	player->playlist()->setCurrentIndex(0);
 	player->playlist()->setPlaybackMode(QMediaPlaylist::Sequential);
 
 	/* Set the current album artist and name */
-	ui.artist_label->setText(album.artist);
-	ui.album_label->setText(album.name);
+	ui.artist_label->setText(album->artist);
+	ui.album_label->setText(album->name);
 
 	/* Set the current album image and thumbnail */
-	ui.album->setIcon(album.cover);
-	ui.album_thumbnail->setPixmap(album.cover);
+	ui.album->setIcon(album->cover);
+	ui.album_thumbnail->setPixmap(album->cover);
 
 	/* Set the previous and next album thumbnails */
-	ui.album_thumbnail_next1->setPixmap(collection->album(-1).cover);
-	ui.album_thumbnail_next2->setPixmap(collection->album(-2).cover);
-	ui.album_thumbnail_prev1->setPixmap(collection->album(+1).cover);
-	ui.album_thumbnail_prev2->setPixmap(collection->album(+2).cover);
+	next1 = album->next;
+	next2 = next1->next;
+	prev1 = album->prev;
+	prev2 = prev1->prev;
+	ui.album_thumbnail_next1->setPixmap(next1->cover);
+	ui.album_thumbnail_next2->setPixmap(next2->cover);
+	ui.album_thumbnail_prev1->setPixmap(prev1->cover);
+	ui.album_thumbnail_prev2->setPixmap(prev2->cover);
 }
 
 void QPlayer::update_track()
@@ -122,16 +126,14 @@ void QPlayer::on_prev_album_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	collection->prev_album();
-	update_album();
+	update_album(collection->prev_album());
 }
 
 void QPlayer::on_next_album_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	collection->next_album();
-	update_album();
+	update_album(collection->next_album());
 }
 
 void QPlayer::on_prev_track_clicked()

@@ -6,7 +6,6 @@
 
 #include <QDebug>
 
-#include "album.h"
 #include "collection.h"
 
 Collection::Collection(QDir collection_dir)
@@ -36,54 +35,56 @@ Collection::Collection(QDir collection_dir)
 			album_dir.setPath(artist_dir.absolutePath() + "/" +
 					  album_name);
 
-			/* Create the album and add it to the playlist */
+			/* Create the album and add it to the collection */
 			album = new Album(artist_name, album_name, album_dir);
-			album_list.push_back(*album);
+			add_album(album);
 		}
 	}
 
 	/* Add a dummy album if the list is empty (to prevent crashes) */
-	if (album_list.size() == 0) {
+	if (!first) {
 		qDebug() << "no albums found";
-		album = new Album(QString(), QString(), QDir());
-		album_list.push_back(*album);
+		//album = new Album(QString(), QString(), QDir());
+		//add_album(album);
 	}
-
-	/* Set the current album */
-	album_iter = album_list.begin();
 }
 
-Album Collection::album(int offset)
+void Collection::add_album(Album *album)
 {
-	return *next(album_iter, offset);
+	if (!first) {
+		/* Add first album */
+		album->next = album;
+		album->prev = album;
+		first = curr = album;
+	} else {
+		/* Append to end of list (before first album) */
+		album->next = first;
+		album->prev = first->prev;
+		first->prev = album;
+		album->prev->next = album;
+	}
 }
 
-void Collection::next_album()
+Album *Collection::first_album()
 {
-	album_iter = next(album_iter, 1);
+	curr = first;
+	return curr;
 }
 
-void Collection::prev_album()
+Album *Collection::next_album()
 {
-	album_iter = next(album_iter, -1);
+	if (!curr)
+		return nullptr;
+
+	curr = curr->next;
+	return curr;
 }
 
-std::vector<Album>::iterator Collection::next(std::vector<Album>::iterator iter,
-					   int step)
+Album *Collection::prev_album()
 {
-	if (step == 0)
-		return iter;
+	if (!curr)
+		return nullptr;
 
-	for (int i = 0; i < abs(step); i++)
-		if (step < 0) {
-			if (iter == album_list.begin())
-				iter = album_list.end();
-			std::advance(iter, -1);
-		} else {
-			std::advance(iter, 1);
-			if (iter == album_list.end())
-				iter = album_list.begin();
-		}
-
-	return iter;
+	curr = curr->prev;
+	return curr;
 }

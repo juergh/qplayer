@@ -9,22 +9,22 @@
 
 #include <QDir>
 
-#include <vector>
+#include "album.h"
 
 class Collection
 {
 public:
-	explicit Collection(QDir collection_dir);
+	explicit Collection(QDir);
 
-	Album album(int offset=0);
-	void next_album();
-	void prev_album();
+	Album *first_album();
+	Album *next_album();
+	Album *prev_album();
+
+	void add_album(Album *);
 
 private:
-	std::vector<Album> album_list;
-	std::vector<Album>::iterator album_iter;
-	std::vector<Album>::iterator next(std::vector<Album>::iterator iter,
-					  int step);
+	Album *first = nullptr;  /* First album (list head) */
+	Album *curr = nullptr;   /* Current album */
 };
 
 #endif // COLLECTION_H

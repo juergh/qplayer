@@ -14,13 +14,15 @@
 class Album
 {
 public:
-	explicit Album(QString artist_name, QString album_name,
-		       QDir album_dir);
+	explicit Album(QString, QString, QDir);
 
 	QString artist;
 	QString name;
 	QPixmap cover;
 	QMediaPlaylist *playlist = nullptr;
+
+	Album *next = nullptr;
+	Album *prev = nullptr;
 };
 
 #endif // ALBUM_H

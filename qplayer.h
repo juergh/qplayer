@@ -46,7 +46,7 @@ private:
 	int volume = 20;
 #endif
 
-	void update_album();
+	void update_album(Album *);
 	void update_track();
 };
 

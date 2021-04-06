@@ -6,8 +6,8 @@
 
 #include "album.h"
 
-Album::Album(QString artist_name, QString album_name, QDir album_dir) :
-	artist(artist_name),
+Album::Album(QString album_artist, QString album_name, QDir album_dir) :
+	artist(album_artist),
 	name(album_name)
 {
 	QStringList tracks;
