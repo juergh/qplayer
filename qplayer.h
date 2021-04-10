@@ -13,7 +13,7 @@
 #include <QMediaPlaylist>
 #include <QShortcut>
 
-#include "album.h"
+#include "item.h"
 #include "collection.h"
 #include "ui_qplayer.h"
 
@@ -25,9 +25,9 @@ public:
 	explicit QPlayer(QWidget *parent = nullptr);
 
 private slots:
-	void on_album_clicked();
-	void on_prev_album_clicked();
-	void on_next_album_clicked();
+	void on_cover_clicked();
+	void on_prev_item_clicked();
+	void on_next_item_clicked();
 	void on_prev_track_clicked();
 	void on_next_track_clicked();
 	void current_media_changed();
@@ -46,8 +46,8 @@ private:
 	int volume = 20;
 #endif
 
-	void update_album(Album *);
-	void update_track();
+	void update_display();
+	void update_track_label();
 };
 
 #endif // QPLAYER_H

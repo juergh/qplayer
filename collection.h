@@ -1,5 +1,5 @@
 /*
- * collection.h
+ * collection.h - Music collection class
  *
  * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
  */
@@ -9,22 +9,23 @@
 
 #include <QDir>
 
-#include "album.h"
+#include "item.h"
 
-class Collection
+class Collection : public Item
 {
 public:
-	explicit Collection(QDir);
+	Collection(QString, QDir);
 
-	Album *first_album();
-	Album *next_album();
-	Album *prev_album();
+	Item *first_item();
+	Item *curr_item();
+	Item *next_item();
+	Item *prev_item();
 
-	void add_album(Album *);
+	void add_item(Item *item);
 
 private:
-	Album *first = nullptr;  /* First album (list head) */
-	Album *curr = nullptr;   /* Current album */
+	Item *first = nullptr;  /* First item */
+	Item *curr = nullptr;   /* Current item */
 };
 
 #endif // COLLECTION_H

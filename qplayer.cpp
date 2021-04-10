@@ -30,19 +30,19 @@ QPlayer::QPlayer(QWidget *parent) :
 		&QPlayer::current_media_changed);
 
 	/* Load the music collection */
-	prefix.setPath("./storage");
+	prefix.setPath("./storage/music");
 	if (!prefix.exists())
-		prefix.setPath("/storage");
-	collection = new Collection(prefix.absolutePath() + "/music");
+		prefix.setPath("/storage/music");
+	collection = new Collection("main", prefix.absolutePath());
 
 	/* Load the button images */
 	prefix.setPath("./icons");
 	if (!prefix.exists())
 		prefix.setPath("/usr/lib/qplayer/icons");
 	pixmap.load(prefix.absolutePath() + "/prev_album.png");
-	ui.prev_album->setIcon(QIcon(pixmap));
+	ui.prev_item->setIcon(QIcon(pixmap));
 	pixmap.load(prefix.absolutePath() + "/next_album.png");
-	ui.next_album->setIcon(QIcon(pixmap));
+	ui.next_item->setIcon(QIcon(pixmap));
 	pixmap.load(prefix.absolutePath() + "/prev_track.png");
 	ui.prev_track->setIcon(QIcon(pixmap));
 	pixmap.load(prefix.absolutePath() + "/next_track.png");
@@ -69,43 +69,49 @@ QPlayer::QPlayer(QWidget *parent) :
 		SLOT(volume_down_pressed()));
 #endif
 
-	/* Set the first album and update the display */
-	update_album(collection->first_album());
+	/* Update the display */
+	update_display();
 }
 
-void QPlayer::update_album(Album *album)
+void QPlayer::update_display()
 {
-	Album *next1, *next2, *prev1, *prev2;
+	Item *item = collection->curr_item();
+	Item *next1, *next2, *prev1, *prev2;
 
-	if (!album)
+	if (!item)
 		return;
 
-	/* Set the playlist */
+	/* Stop the player */
 	player->stop();
-	player->setPlaylist(album->playlist);
-	player->playlist()->setCurrentIndex(0);
-	player->playlist()->setPlaybackMode(QMediaPlaylist::Sequential);
 
-	/* Set the current album artist and name */
-	ui.artist_label->setText(album->artist);
-	ui.album_label->setText(album->name);
+	/* Set the artist, album and track labels */
+	ui.artist_label->setText(item->artist);
+	ui.album_label->setText(item->album);
+	ui.track_label->setText(QString());
 
-	/* Set the current album image and thumbnail */
-	ui.album->setIcon(album->cover);
-	ui.album_thumbnail->setPixmap(album->cover);
+	/* Set the cover image and thumbnail */
+	ui.cover->setIcon(item->cover);
+	ui.cover_thumbnail->setPixmap(item->cover);
 
-	/* Set the previous and next album thumbnails */
-	next1 = album->next;
+	/* Set the previous and next thumbnails */
+	next1 = item->next;
 	next2 = next1->next;
-	prev1 = album->prev;
+	prev1 = item->prev;
 	prev2 = prev1->prev;
-	ui.album_thumbnail_next1->setPixmap(next1->cover);
-	ui.album_thumbnail_next2->setPixmap(next2->cover);
-	ui.album_thumbnail_prev1->setPixmap(prev1->cover);
-	ui.album_thumbnail_prev2->setPixmap(prev2->cover);
+	ui.cover_thumbnail_next1->setPixmap(next1->cover);
+	ui.cover_thumbnail_next2->setPixmap(next2->cover);
+	ui.cover_thumbnail_prev1->setPixmap(prev1->cover);
+	ui.cover_thumbnail_prev2->setPixmap(prev2->cover);
+
+	/* Set the playlist if it's an album */
+	if (item->playlist) {
+		player->setPlaylist(item->playlist);
+		player->playlist()->setCurrentIndex(0);
+		player->playlist()->setPlaybackMode(QMediaPlaylist::Sequential);
+	}
 }
 
-void QPlayer::update_track()
+void QPlayer::update_track_label()
 {
 	QUrl track_url;
 	QString track_name;
@@ -118,7 +124,7 @@ void QPlayer::update_track()
 	ui.track_label->setText(track_name);
 }
 
-void QPlayer::on_album_clicked()
+void QPlayer::on_cover_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
@@ -128,18 +134,20 @@ void QPlayer::on_album_clicked()
 		player->play();
 }
 
-void QPlayer::on_prev_album_clicked()
+void QPlayer::on_prev_item_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	update_album(collection->prev_album());
+	collection->prev_item();
+	update_display();
 }
 
-void QPlayer::on_next_album_clicked()
+void QPlayer::on_next_item_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	update_album(collection->next_album());
+	collection->next_item();
+	update_display();
 }
 
 void QPlayer::on_prev_track_clicked()
@@ -167,7 +175,7 @@ void QPlayer::current_media_changed()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	update_track();
+	update_track_label();
 }
 
 #ifndef RASPI_KIDZ

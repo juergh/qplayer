@@ -1,5 +1,5 @@
 /*
- * album.h
+ * album.h - Music album class
  *
  * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
  */
@@ -8,21 +8,13 @@
 #define ALBUM_H
 
 #include <QDir>
-#include <QMediaPlaylist>
-#include <QPixmap>
 
-class Album
+#include "item.h"
+
+class Album : public Item
 {
 public:
-	explicit Album(QString, QString, QDir);
-
-	QString artist;
-	QString name;
-	QPixmap cover;
-	QMediaPlaylist *playlist = nullptr;
-
-	Album *next = nullptr;
-	Album *prev = nullptr;
+	Album(QString, QString, QDir);
 };
 
 #endif // ALBUM_H

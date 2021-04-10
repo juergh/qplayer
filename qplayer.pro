@@ -3,11 +3,13 @@ QT += multimedia \
 
 FORMS = qplayer.ui
 
-HEADERS = album.h \
+HEADERS = item.h \
+          album.h \
           collection.h \
           qplayer.h
 
 SOURCES = main.cpp \
+          item.cpp \
           album.cpp \
           collection.cpp \
           qplayer.cpp

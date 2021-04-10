@@ -1,74 +1,84 @@
 /*
- * collection.cpp
+ * collection.cpp - Music collection class
  *
  * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
  */
 
 #include <QDebug>
 
+#include "album.h"
 #include "collection.h"
 
-Collection::Collection(QDir collection_dir)
+Collection::Collection(QString name, QDir dir) :
+	Item(name, QString())
 {
 	QStringList artists;
 	QDir artist_dir;
 	QStringList albums;
 	QDir album_dir;
-	Album *album;
+	QString path = dir.absolutePath();
 
-	qDebug() << "collection:" << collection_dir.absolutePath();
+	qDebug() << "collection: name:" << name;
+	qDebug() << "collection: path:" << path;
 
-	/* Read the artists sorted by name */
-	artists = collection_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot,
-					QDir::Name);
+	/* Read the cover image */
+        cover.load(path + "/cover.jpg");
 
 	/* Loop over all artists */
-	for (const auto& artist_name : artists) {
-		/* Read the albums sorted by name */
-		artist_dir.setPath(collection_dir.absolutePath() + "/" +
-				   artist_name);
-		albums = artist_dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot,
-					      QDir::Name);
+	artists = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+	for (const auto& artist : artists) {
+		artist_dir.setPath(dir.absolutePath() + "/" + artist);
 
-		/* Loop over all albums */
-		for (const auto& album_name : albums) {
-			album_dir.setPath(artist_dir.absolutePath() + "/" +
-					  album_name);
+                if (QFile::exists(artist_dir.absolutePath() + "/cover.jpg")) {
+			/* There is a cover.jpg file at the artist directory
+			 * level, so this is a (sub-)collection */
+			add_item(new Collection(artist, artist_dir));
 
-			/* Create the album and add it to the collection */
-			album = new Album(artist_name, album_name, album_dir);
-			add_album(album);
+		} else {
+			/* Loop over all albums */
+			albums = artist_dir.entryList(QDir::Dirs |
+						      QDir::NoDotAndDotDot,
+						      QDir::Name);
+			for (const auto& album : albums) {
+				album_dir.setPath(artist_dir.absolutePath() +
+						  "/" + album);
+				add_item(new Album(artist, album, album_dir));
+			}
 		}
 	}
 
-	if (!first) {
-		qDebug() << "no albums found";
-	}
+	if (!first)
+		qDebug() << "collection: no items found";
 }
 
-void Collection::add_album(Album *album)
+void Collection::add_item(Item *item)
 {
 	if (!first) {
-		/* Add first album */
-		album->next = album;
-		album->prev = album;
-		first = curr = album;
+		/* Add first item */
+		item->next = item;
+		item->prev = item;
+		first = curr = item;
 	} else {
-		/* Append to end of list (before first album) */
-		album->next = first;
-		album->prev = first->prev;
-		first->prev = album;
-		album->prev->next = album;
+		/* Append to end of list (before first item) */
+		item->next = first;
+		item->prev = first->prev;
+		first->prev = item;
+		item->prev->next = item;
 	}
 }
 
-Album *Collection::first_album()
+Item *Collection::first_item()
 {
 	curr = first;
 	return curr;
 }
 
-Album *Collection::next_album()
+Item *Collection::curr_item()
+{
+	return curr;
+}
+
+Item *Collection::next_item()
 {
 	if (!curr)
 		return nullptr;
@@ -77,7 +87,7 @@ Album *Collection::next_album()
 	return curr;
 }
 
-Album *Collection::prev_album()
+Item *Collection::prev_item()
 {
 	if (!curr)
 		return nullptr;
