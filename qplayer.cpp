@@ -39,9 +39,11 @@ QPlayer::QPlayer(QWidget *parent) :
 	prefix.setPath("./icons");
 	if (!prefix.exists())
 		prefix.setPath("/usr/lib/qplayer/icons");
-	pixmap.load(prefix.absolutePath() + "/prev_album.png");
+	pixmap.load(prefix.absolutePath() + "/up_item.png");
+	ui.up_item->setIcon(QIcon(pixmap));
+	pixmap.load(prefix.absolutePath() + "/prev_item.png");
 	ui.prev_item->setIcon(QIcon(pixmap));
-	pixmap.load(prefix.absolutePath() + "/next_album.png");
+	pixmap.load(prefix.absolutePath() + "/next_item.png");
 	ui.next_item->setIcon(QIcon(pixmap));
 	pixmap.load(prefix.absolutePath() + "/prev_track.png");
 	ui.prev_track->setIcon(QIcon(pixmap));
@@ -99,9 +101,9 @@ void QPlayer::update_display()
 	prev1 = item->prev;
 	prev2 = prev1->prev;
 	ui.cover_thumbnail_next1->setPixmap(next1->cover);
-	ui.cover_thumbnail_next2->setPixmap(next2->cover);
+	//	ui.cover_thumbnail_next2->setPixmap(next2->cover);
 	ui.cover_thumbnail_prev1->setPixmap(prev1->cover);
-	ui.cover_thumbnail_prev2->setPixmap(prev2->cover);
+	//	ui.cover_thumbnail_prev2->setPixmap(prev2->cover);
 
 	/* Set the playlist if it's an album */
 	if (item->playlist) {
@@ -126,12 +128,35 @@ void QPlayer::update_track_label()
 
 void QPlayer::on_cover_clicked()
 {
+	Item *item = collection->curr_item();
+
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	if (player->state() == QMediaPlayer::PlayingState)
-		player->pause();
-	else
-		player->play();
+	/* The current item is an album if it has a playlist, otherwise it's
+	 * a sub-collection, in which case we switch to it */
+	if (item->playlist) {
+		if (player->state() == QMediaPlayer::PlayingState)
+			player->pause();
+		else
+			player->play();
+	} else {
+		/* Save the current collection and switch to the new one */
+		prev_collection = collection;
+		collection = (Collection *)item;
+		collection->first_item();
+		update_display();
+	}
+}
+
+void QPlayer::on_up_item_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	if (prev_collection) {
+		collection = prev_collection;
+		prev_collection = nullptr;
+		update_display();
+	}
 }
 
 void QPlayer::on_prev_item_clicked()

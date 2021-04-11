@@ -26,6 +26,7 @@ public:
 
 private slots:
 	void on_cover_clicked();
+	void on_up_item_clicked();
 	void on_prev_item_clicked();
 	void on_next_item_clicked();
 	void on_prev_track_clicked();
@@ -39,6 +40,7 @@ private slots:
 private:
 	Ui::QPlayer ui;
 	Collection *collection = nullptr;
+	Collection *prev_collection = nullptr;
 	QMediaPlayer *player = nullptr;
 #ifndef RASPI_KIDZ
 	QShortcut *volume_up = nullptr;
