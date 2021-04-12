@@ -26,6 +26,7 @@ public:
 
 private slots:
 	void on_cover_clicked();
+	void on_cover_thumb_clicked();
 	void on_up_item_clicked();
 	void on_prev_item_clicked();
 	void on_next_item_clicked();

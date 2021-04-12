@@ -93,7 +93,7 @@ void QPlayer::update_display()
 
 	/* Set the cover image and thumbnail */
 	ui.cover->setIcon(item->cover);
-	ui.cover_thumbnail->setPixmap(item->cover);
+	ui.cover_thumb->setIcon(item->cover);
 
 	/* Set the previous and next thumbnails */
 	next1 = item->next;
@@ -146,6 +146,13 @@ void QPlayer::on_cover_clicked()
 		collection->first_item();
 		update_display();
 	}
+}
+
+void QPlayer::on_cover_thumb_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	on_cover_clicked();
 }
 
 void QPlayer::on_up_item_clicked()
