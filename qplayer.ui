@@ -23,7 +23,7 @@
   <property name="styleSheet">
    <string notr="true">background-color: rgb(0, 0, 0);</string>
   </property>
-  <widget class="QLabel" name="cover_thumbnail_prev1">
+  <widget class="QPushButton" name="prev_cover_thumb">
    <property name="geometry">
     <rect>
      <x>350</x>
@@ -32,13 +32,22 @@
      <height>100</height>
     </rect>
    </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(0, 0, 0);</string>
    </property>
    <property name="text">
-    <string>TextLabel</string>
+    <string/>
    </property>
-   <property name="scaledContents">
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+   <property name="scaledContents" stdset="0">
     <bool>true</bool>
    </property>
   </widget>
@@ -62,9 +71,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(0, 0, 0);
-border-color: rgb(204, 0, 0);
-border-width: 5px;
-border-style: solid;</string>
+</string>
    </property>
    <property name="text">
     <string/>
@@ -79,7 +86,7 @@ border-style: solid;</string>
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QLabel" name="cover_thumbnail_next1">
+  <widget class="QPushButton" name="next_cover_thumb">
    <property name="geometry">
     <rect>
      <x>570</x>
@@ -88,13 +95,22 @@ border-style: solid;</string>
      <height>100</height>
     </rect>
    </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(0, 0, 0);</string>
    </property>
    <property name="text">
-    <string>TextLabel</string>
+    <string/>
    </property>
-   <property name="scaledContents">
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+   <property name="scaledContents" stdset="0">
     <bool>true</bool>
    </property>
   </widget>

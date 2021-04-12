@@ -78,7 +78,6 @@ QPlayer::QPlayer(QWidget *parent) :
 void QPlayer::update_display()
 {
 	Item *item = collection->curr_item();
-	Item *next1, *next2, *prev1, *prev2;
 
 	if (!item)
 		return;
@@ -96,14 +95,8 @@ void QPlayer::update_display()
 	ui.cover_thumb->setIcon(item->cover);
 
 	/* Set the previous and next thumbnails */
-	next1 = item->next;
-	next2 = next1->next;
-	prev1 = item->prev;
-	prev2 = prev1->prev;
-	ui.cover_thumbnail_next1->setPixmap(next1->cover);
-	//	ui.cover_thumbnail_next2->setPixmap(next2->cover);
-	ui.cover_thumbnail_prev1->setPixmap(prev1->cover);
-	//	ui.cover_thumbnail_prev2->setPixmap(prev2->cover);
+	ui.next_cover_thumb->setIcon(item->next->cover);
+	ui.prev_cover_thumb->setIcon(item->prev->cover);
 
 	/* Set the playlist if it's an album */
 	if (item->playlist) {
@@ -153,6 +146,20 @@ void QPlayer::on_cover_thumb_clicked()
 	qDebug().nospace() << "qplayer::" << __func__;
 
 	on_cover_clicked();
+}
+
+void QPlayer::on_next_cover_thumb_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	on_next_item_clicked();
+}
+
+void QPlayer::on_prev_cover_thumb_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	on_prev_item_clicked();
 }
 
 void QPlayer::on_up_item_clicked()
