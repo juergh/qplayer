@@ -13,7 +13,6 @@ Collection::Collection(QString artist, QDir dir) :
 	Item(artist, QString())
 {
 	QString path = dir.absolutePath();
-	QString image;
 	QStringList artists;
 	QDir artist_dir;
 	QStringList albums;
@@ -23,10 +22,8 @@ Collection::Collection(QString artist, QDir dir) :
 	qDebug() << "collection: path:  " << path;
 
 	/* Load the cover image if it exists */
-	image = path + "/cover.jpg";
-	if (QFile::exists(image)) {
-		qDebug() << "collection: image: " << image;
-		cover.load(image);
+	if (QFile::exists(path + "/cover.jpg")) {
+		cover.load(path + "/cover.jpg");
 	}
 
 	/* We're at the top-level if artist is empty */
