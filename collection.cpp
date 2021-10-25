@@ -43,7 +43,7 @@ Collection::Collection(QString artist, QDir dir) :
 			} else if (albums.size() == 1) {
 				/* Only a single album, add it */
 				album = albums.at(0);
-				album_dir.setPath(path + "/" + album);
+				album_dir.setPath(artist_dir.path() + "/" + album);
 				add_item(new Album(artist, album, album_dir));
 			} else {
 				/* Multiple albums, add a (sub-)collection */
