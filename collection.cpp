@@ -9,41 +9,59 @@
 #include "album.h"
 #include "collection.h"
 
-Collection::Collection(QString name, QDir dir) :
-	Item(name, QString())
+Collection::Collection(QString artist, QDir dir) :
+	Item(artist, QString())
 {
+	QString path = dir.absolutePath();
+	QString image;
 	QStringList artists;
 	QDir artist_dir;
 	QStringList albums;
 	QDir album_dir;
-	QString path = dir.absolutePath();
 
-	qDebug() << "collection: name:" << name;
-	qDebug() << "collection: path:" << path;
+	qDebug() << "collection: artist:" << artist;
+	qDebug() << "collection: path:  " << path;
 
-	/* Read the cover image */
-        cover.load(path + "/cover.jpg");
+	/* Load the cover image if it exists */
+	image = path + "/cover.jpg";
+	if (QFile::exists(image)) {
+		qDebug() << "collection: image: " << image;
+		cover.load(image);
+	}
 
-	/* Loop over all artists */
-	artists = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
-	for (const auto& artist : artists) {
-		artist_dir.setPath(dir.absolutePath() + "/" + artist);
-
-                if (QFile::exists(artist_dir.absolutePath() + "/cover.jpg")) {
-			/* There is a cover.jpg file at the artist directory
-			 * level, so this is a (sub-)collection */
-			add_item(new Collection(artist, artist_dir));
-
-		} else {
-			/* Loop over all albums */
+	/* We're at the top-level if artist is empty */
+	if (artist.size() == 0) {
+		/* Loop over all artists */
+		artists = dir.entryList(QDir::Dirs |
+					QDir::NoDotAndDotDot,
+					QDir::Name);
+		for (const auto& artist : artists) {
+			artist_dir.setPath(path + "/" + artist);
 			albums = artist_dir.entryList(QDir::Dirs |
 						      QDir::NoDotAndDotDot,
 						      QDir::Name);
-			for (const auto& album : albums) {
-				album_dir.setPath(artist_dir.absolutePath() +
-						  "/" + album);
+			if (albums.size() == 0) {
+				/* No albums */
+				continue;
+			} else if (albums.size() == 1) {
+				/* Only a single album, add it */
+				album = albums.at(0);
+				album_dir.setPath(path + "/" + album);
 				add_item(new Album(artist, album, album_dir));
+			} else {
+				/* Multiple albums, add a (sub-)collection */
+				add_item(new Collection(artist, artist_dir));
 			}
+		}
+	} else {
+		/* Loop over all albums */
+		artist_dir.setPath(path);
+		albums = artist_dir.entryList(QDir::Dirs |
+					      QDir::NoDotAndDotDot,
+					      QDir::Name);
+		for (const auto& album : albums) {
+			album_dir.setPath(path + "/" + album);
+			add_item(new Album(artist, album, album_dir));
 		}
 	}
 

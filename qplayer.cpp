@@ -33,7 +33,7 @@ QPlayer::QPlayer(QWidget *parent) :
 	prefix.setPath("./storage/music");
 	if (!prefix.exists())
 		prefix.setPath("/storage/music");
-	collection = new Collection("main", prefix.absolutePath());
+	collection = new Collection("", prefix.absolutePath());
 
 	/* Load the button images */
 	prefix.setPath("./icons");
