@@ -7,8 +7,6 @@
 #ifndef QPLAYER_H
 #define QPLAYER_H
 
-#define RASPI_KIDZ
-
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QShortcut>

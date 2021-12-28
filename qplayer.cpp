@@ -52,11 +52,12 @@ QPlayer::QPlayer(QWidget *parent) :
 
 #ifndef RASPI_KIDZ
 	/* Set the keyboard shortcuts */
-	ui.prev_album->setShortcut(QKeySequence(Qt::Key_Left));
-	ui.prev_track->setShortcut(QKeySequence(Qt::Key_Less));
-	ui.album->setShortcut(QKeySequence(Qt::Key_Space));
-	ui.next_track->setShortcut(QKeySequence(Qt::Key_Greater));
-	ui.next_album->setShortcut(QKeySequence(Qt::Key_Right));
+	ui.prev_item->setShortcut(QKeySequence(Qt::Key_Left));
+	ui.prev_track->setShortcut(QKeySequence(Qt::Key_Comma));
+	ui.cover->setShortcut(QKeySequence(Qt::Key_Space));
+	ui.next_track->setShortcut(QKeySequence(Qt::Key_Period));
+	ui.next_item->setShortcut(QKeySequence(Qt::Key_Right));
+	ui.up_item->setShortcut(QKeySequence(Qt::Key_Escape));
 
 	/* Set the volume up keystroke handler */
 	volume_up = new QShortcut(this);
