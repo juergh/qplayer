@@ -70,6 +70,18 @@ QPlayer::QPlayer(QWidget *parent) :
 	volume_down->setKey(Qt::Key_Down);
 	connect(volume_down, SIGNAL(activated()), this,
 		SLOT(volume_down_pressed()));
+
+	/* Set the seek left keystroke handler */
+	seek_left = new QShortcut(this);
+	seek_left->setKey(Qt::Key_Z);
+	connect(seek_left, SIGNAL(activated()), this,
+		SLOT(seek_left_pressed()));
+
+	/* Set the seek right keystroke handler */
+	seek_right = new QShortcut(this);
+	seek_right->setKey(Qt::Key_X);
+	connect(seek_right, SIGNAL(activated()), this,
+		SLOT(seek_right_pressed()));
 #endif
 
 	/* Update the display */
@@ -246,5 +258,31 @@ void QPlayer::volume_down_pressed()
 		volume = 0;
 
 	player->setVolume(volume_lin2log(volume));
+}
+
+void QPlayer::seek_left_pressed()
+{
+	qint64 position;
+
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	position = player->position() - 5000;
+	if (position < 0)
+		position = 0;
+
+	player->setPosition(position);
+}
+
+void QPlayer::seek_right_pressed()
+{
+	qint64 position;
+
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	position = player->position() + 5000;
+	if (position > player->duration())
+		position = player->duration() - 1;
+
+	player->setPosition(position);
 }
 #endif

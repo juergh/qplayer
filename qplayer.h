@@ -36,6 +36,8 @@ private slots:
 #ifndef RASPI_KIDZ
 	void volume_up_pressed();
 	void volume_down_pressed();
+	void seek_left_pressed();
+	void seek_right_pressed();
 #endif
 
 private:
@@ -44,9 +46,11 @@ private:
 	Collection *prev_collection = nullptr;
 	QMediaPlayer *player = nullptr;
 #ifndef RASPI_KIDZ
+	int volume = 20;
 	QShortcut *volume_up = nullptr;
 	QShortcut *volume_down = nullptr;
-	int volume = 20;
+	QShortcut *seek_left = nullptr;
+	QShortcut *seek_right = nullptr;
 #endif
 
 	void update_display();
