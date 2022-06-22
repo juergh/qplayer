@@ -10,7 +10,7 @@
 #include "collection.h"
 #include "qplayer.h"
 
-QPlayer::QPlayer(QWidget *parent) :
+QPlayer::QPlayer(QWidget *parent, int timeout) :
 	QWidget(parent)
 {
 	QPixmap pixmap;
@@ -86,6 +86,9 @@ QPlayer::QPlayer(QWidget *parent) :
 
 	/* Update the display */
 	update_display();
+
+	/* Start the timeout timer */
+	timer_start(timeout * 1000);
 }
 
 void QPlayer::update_display()
@@ -137,6 +140,9 @@ void QPlayer::on_cover_clicked()
 	Item *item = collection->curr_item();
 
 	qDebug().nospace() << "qplayer::" << __func__;
+
+	/* Restart the timeout timer */
+	timer_start();
 
 	/* The current item is an album if it has a playlist, otherwise it's
 	 * a sub-collection, in which case we switch to it */
@@ -228,6 +234,40 @@ void QPlayer::current_media_changed()
 	qDebug().nospace() << "qplayer::" << __func__;
 
 	update_track_label();
+}
+
+void QPlayer::timer_start(int timeout)
+{
+	if (!timeout && !timer)
+		return;
+
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	if (!timer) {
+		timer = new QTimer();
+		connect(timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
+		timer->setSingleShot(true);
+	}
+
+	if (timeout)
+		timer->start(timeout);
+	else
+		timer->start(timer->interval());
+}
+
+void QPlayer::timer_stop()
+{
+	if (!timer)
+		return;
+
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	timer->stop();
+}
+
+void QPlayer::timer_timeout()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
 }
 
 #ifndef RASPI_KIDZ

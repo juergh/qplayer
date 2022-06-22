@@ -10,6 +10,7 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QShortcut>
+#include <QTimer>
 
 #include "item.h"
 #include "collection.h"
@@ -20,7 +21,7 @@ class QPlayer : public QWidget
 	Q_OBJECT
 
 public:
-	explicit QPlayer(QWidget *parent = nullptr);
+	explicit QPlayer(QWidget *parent = nullptr, int timeout = 0);
 
 private slots:
 	void on_cover_clicked();
@@ -33,6 +34,9 @@ private slots:
 	void on_prev_track_clicked();
 	void on_next_track_clicked();
 	void current_media_changed();
+	void timer_start(int timeout = 0);
+	void timer_stop();
+	void timer_timeout();
 #ifndef RASPI_KIDZ
 	void volume_up_pressed();
 	void volume_down_pressed();
@@ -45,6 +49,7 @@ private:
 	Collection *collection = nullptr;
 	Collection *prev_collection = nullptr;
 	QMediaPlayer *player = nullptr;
+	QTimer *timer = nullptr;
 #ifndef RASPI_KIDZ
 	int volume = 20;
 	QShortcut *volume_up = nullptr;
