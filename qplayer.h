@@ -24,19 +24,20 @@ public:
 	explicit QPlayer(QWidget *parent = nullptr, int timeout = 0);
 
 private slots:
-	void on_cover_clicked();
-	void on_cover_thumb_clicked();
-	void on_next_cover_thumb_clicked();
-	void on_prev_cover_thumb_clicked();
-	void on_up_item_clicked();
-	void on_prev_item_clicked();
-	void on_next_item_clicked();
-	void on_prev_track_clicked();
-	void on_next_track_clicked();
-	void current_media_changed();
 	void timer_start(int timeout = 0);
 	void timer_stop();
 	void timer_timeout();
+
+	void on_up_item_clicked();
+	void on_cover_clicked();
+	void on_cover_thumb_clicked();
+	void on_prev_item_clicked();
+	void on_prev_cover_thumb_clicked();
+	void on_next_item_clicked();
+	void on_next_cover_thumb_clicked();
+	void on_prev_track_clicked();
+	void on_next_track_clicked();
+	void current_media_changed();
 #ifndef RASPI_KIDZ
 	void volume_up_pressed();
 	void volume_down_pressed();

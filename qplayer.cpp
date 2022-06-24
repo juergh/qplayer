@@ -91,6 +91,10 @@ QPlayer::QPlayer(QWidget *parent, int timeout) :
 	timer_start(timeout * 1000);
 }
 
+/* ----------------------------------------------------------------------------
+ * Display functions
+ */
+
 void QPlayer::update_display()
 {
 	Item *item = collection->curr_item();
@@ -135,106 +139,9 @@ void QPlayer::update_track_label()
 	ui.track_label->setText(track_name);
 }
 
-void QPlayer::on_cover_clicked()
-{
-	Item *item = collection->curr_item();
-
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	/* Restart the timeout timer */
-	timer_start();
-
-	/* The current item is an album if it has a playlist, otherwise it's
-	 * a sub-collection, in which case we switch to it */
-	if (item->playlist) {
-		if (player->state() == QMediaPlayer::PlayingState)
-			player->pause();
-		else
-			player->play();
-	} else {
-		/* Save the current collection and switch to the new one */
-		prev_collection = collection;
-		collection = (Collection *)item;
-		collection->first_item();
-		update_display();
-	}
-}
-
-void QPlayer::on_cover_thumb_clicked()
-{
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	on_cover_clicked();
-}
-
-void QPlayer::on_next_cover_thumb_clicked()
-{
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	on_next_item_clicked();
-}
-
-void QPlayer::on_prev_cover_thumb_clicked()
-{
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	on_prev_item_clicked();
-}
-
-void QPlayer::on_up_item_clicked()
-{
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	if (prev_collection) {
-		collection = prev_collection;
-		prev_collection = nullptr;
-		update_display();
-	}
-}
-
-void QPlayer::on_prev_item_clicked()
-{
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	collection->prev_item();
-	update_display();
-}
-
-void QPlayer::on_next_item_clicked()
-{
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	collection->next_item();
-	update_display();
-}
-
-void QPlayer::on_prev_track_clicked()
-{
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	if (!player->playlist() || (player->playlist()->currentIndex() == 0))
-		return;
-
-	player->playlist()->previous();
-}
-
-void QPlayer::on_next_track_clicked()
-{
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	if (!player->playlist() || (player->playlist()->currentIndex() ==
-				    player->playlist()->mediaCount() - 1))
-		return;
-
-	player->playlist()->next();
-}
-
-void QPlayer::current_media_changed()
-{
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	update_track_label();
-}
+/* ----------------------------------------------------------------------------
+ * Timer functions
+ */
 
 void QPlayer::timer_start(int timeout)
 {
@@ -268,6 +175,111 @@ void QPlayer::timer_stop()
 void QPlayer::timer_timeout()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
+}
+
+/* ----------------------------------------------------------------------------
+ * Slot functions
+ */
+
+void QPlayer::on_up_item_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	if (prev_collection) {
+		collection = prev_collection;
+		prev_collection = nullptr;
+		update_display();
+	}
+}
+
+void QPlayer::on_cover_clicked()
+{
+	Item *item = collection->curr_item();
+
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	/* Restart the timeout timer */
+	timer_start();
+
+	/* The current item is an album if it has a playlist, otherwise it's
+	 * a sub-collection, in which case we switch to it */
+	if (item->playlist) {
+		if (player->state() == QMediaPlayer::PlayingState)
+			player->pause();
+		else
+			player->play();
+	} else {
+		/* Save the current collection and switch to the new one */
+		prev_collection = collection;
+		collection = (Collection *)item;
+		collection->first_item();
+		update_display();
+	}
+}
+
+void QPlayer::on_cover_thumb_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	on_cover_clicked();
+}
+
+void QPlayer::on_prev_item_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	collection->prev_item();
+	update_display();
+}
+
+void QPlayer::on_prev_cover_thumb_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	on_prev_item_clicked();
+}
+
+void QPlayer::on_next_item_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	collection->next_item();
+	update_display();
+}
+
+void QPlayer::on_next_cover_thumb_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	on_next_item_clicked();
+}
+
+void QPlayer::on_prev_track_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	if (!player->playlist() || (player->playlist()->currentIndex() == 0))
+		return;
+
+	player->playlist()->previous();
+}
+
+void QPlayer::on_next_track_clicked()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	if (!player->playlist() || (player->playlist()->currentIndex() ==
+				    player->playlist()->mediaCount() - 1))
+		return;
+
+	player->playlist()->next();
+}
+
+void QPlayer::current_media_changed()
+{
+	qDebug().nospace() << "qplayer::" << __func__;
+
+	update_track_label();
 }
 
 #ifndef RASPI_KIDZ
