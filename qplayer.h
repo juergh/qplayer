@@ -38,6 +38,7 @@ private slots:
 	void on_prev_track_clicked();
 	void on_next_track_clicked();
 	void current_media_changed();
+	void state_changed();
 #ifndef RASPI_KIDZ
 	void volume_up_pressed();
 	void volume_down_pressed();
