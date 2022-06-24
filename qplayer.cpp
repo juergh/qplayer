@@ -298,8 +298,10 @@ void QPlayer::state_changed()
 	qDebug().nospace() << "qplayer::" << __func__;
 
 	if (player->state() == QMediaPlayer::PlayingState) {
+		qDebug().nospace() << "plauer->state() = PlayingState";
 		timer_stop();
 	} else {
+		qDebug().nospace() << "plauer->state() = PausedState";
 		timer_start();
 	}
 }
