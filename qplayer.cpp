@@ -6,6 +6,8 @@
 
 #include <cmath>
 
+#include <QProcess>
+
 #include "album.h"
 #include "collection.h"
 #include "qplayer.h"
@@ -177,6 +179,9 @@ void QPlayer::timer_stop()
 void QPlayer::timer_timeout()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
+
+	QProcess *process = new QProcess(this);
+	process->start("/sbin/poweroff", QStringList());
 }
 
 /* ----------------------------------------------------------------------------
