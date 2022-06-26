@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	parser.process(app);
 
 	int timeout = parser.value(timeoutOption).toInt();
-	if (timeout < 1) {
+	if (timeout < 0) {
 		qDebug().nospace() << "Invalid timeout value: " << timeout;
 		return -1;
 	}
