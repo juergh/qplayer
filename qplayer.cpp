@@ -91,8 +91,8 @@ QPlayer::QPlayer(QWidget *parent, int timeout) :
 	/* Update the display */
 	update_display();
 
-	/* Start the timeout timer */
-	timer_start(timeout * 1000);
+	/* Initialize and start the timeout timer */
+	timer_set(timeout * 1000);
 }
 
 /* ----------------------------------------------------------------------------
@@ -147,7 +147,7 @@ void QPlayer::update_track_label()
  * Timer functions
  */
 
-void QPlayer::timer_start(int timeout)
+void QPlayer::timer_set(int timeout)
 {
 	if (!timeout && !timer)
 		return;
@@ -160,20 +160,18 @@ void QPlayer::timer_start(int timeout)
 		timer->setSingleShot(true);
 	}
 
-	if (timeout)
+	if (timeout) {
+		qDebug().nospace() << "timer->start()";
 		timer->start(timeout);
-	else
-		timer->start(timer->interval());
-}
-
-void QPlayer::timer_stop()
-{
-	if (!timer)
-		return;
-
-	qDebug().nospace() << "qplayer::" << __func__;
-
-	timer->stop();
+	} else {
+		if (player->state() == QMediaPlayer::PlayingState) {
+			qDebug().nospace() << "timer->stop()";
+			timer->stop();
+		} else {
+			qDebug().nospace() << "timer->start()";
+			timer->start(timer->interval());
+		}
+	}
 }
 
 void QPlayer::timer_timeout()
@@ -192,7 +190,7 @@ void QPlayer::on_up_item_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	timer_start();
+	timer_set();
 
 	if (prev_collection) {
 		collection = prev_collection;
@@ -207,6 +205,8 @@ void QPlayer::on_cover_clicked()
 
 	qDebug().nospace() << "qplayer::" << __func__;
 
+	timer_set();
+
 	/* The current item is an album if it has a playlist, otherwise it's
 	 * a sub-collection, in which case we switch to it */
 	if (item->playlist) {
@@ -215,8 +215,6 @@ void QPlayer::on_cover_clicked()
 		else
 			player->play();
 	} else {
-		timer_start();
-
 		/* Save the current collection and switch to the new one */
 		prev_collection = collection;
 		collection = (Collection *)item;
@@ -236,7 +234,7 @@ void QPlayer::on_prev_item_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	timer_start();
+	timer_set();
 
 	collection->prev_item();
 	update_display();
@@ -253,7 +251,7 @@ void QPlayer::on_next_item_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	timer_start();
+	timer_set();
 
 	collection->next_item();
 	update_display();
@@ -270,7 +268,7 @@ void QPlayer::on_prev_track_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	timer_start();
+	timer_set();
 
 	if (!player->playlist() || (player->playlist()->currentIndex() == 0))
 		return;
@@ -282,7 +280,7 @@ void QPlayer::on_next_track_clicked()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	timer_start();
+	timer_set();
 
 	if (!player->playlist() || (player->playlist()->currentIndex() ==
 				    player->playlist()->mediaCount() - 1))
@@ -302,13 +300,7 @@ void QPlayer::state_changed()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	if (player->state() == QMediaPlayer::PlayingState) {
-		qDebug().nospace() << "plauer->state() = PlayingState";
-		timer_stop();
-	} else {
-		qDebug().nospace() << "plauer->state() = PausedState";
-		timer_start();
-	}
+	timer_set();
 }
 
 #ifndef RASPI_KIDZ
@@ -323,7 +315,7 @@ void QPlayer::volume_up_pressed()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	timer_start();
+	timer_set();
 
 	volume = volume + 5;
 	if (volume > 100)
@@ -336,7 +328,7 @@ void QPlayer::volume_down_pressed()
 {
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	timer_start();
+	timer_set();
 
 	volume = volume - 5;
 	if (volume < 0)
@@ -351,7 +343,7 @@ void QPlayer::seek_left_pressed()
 
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	timer_start();
+	timer_set();
 
 	position = player->position() - 5000;
 	if (position < 0)
@@ -366,7 +358,7 @@ void QPlayer::seek_right_pressed()
 
 	qDebug().nospace() << "qplayer::" << __func__;
 
-	timer_start();
+	timer_set();
 
 	position = player->position() + 5000;
 	if (position > player->duration())

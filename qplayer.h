@@ -24,8 +24,7 @@ public:
 	explicit QPlayer(QWidget *parent = nullptr, int timeout = 0);
 
 private slots:
-	void timer_start(int timeout = 0);
-	void timer_stop();
+	void timer_set(int timeout = 0);
 	void timer_timeout();
 
 	void on_up_item_clicked();
