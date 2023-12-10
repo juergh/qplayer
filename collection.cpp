@@ -4,6 +4,7 @@
  * Copyright (C) 2020 - Juerg Haefliger <juergh@gmail.com>
  */
 
+#include <QCollator>
 #include <QDebug>
 
 #include "album.h"
@@ -17,6 +18,7 @@ Collection::Collection(QString artist, QDir dir) :
 	QDir artist_dir;
 	QStringList albums;
 	QDir album_dir;
+	QCollator coll;
 
 	qDebug() << "collection: artist:" << artist;
 	qDebug() << "collection: path:  " << path;
@@ -26,17 +28,28 @@ Collection::Collection(QString artist, QDir dir) :
 		cover.load(path + "/cover.jpg");
 	}
 
+	/* Sort numerically */
+	coll.setNumericMode(true);
+
 	/* We're at the top-level if artist is empty */
 	if (artist.size() == 0) {
 		/* Loop over all artists */
 		artists = dir.entryList(QDir::Dirs |
 					QDir::NoDotAndDotDot,
-					QDir::Name);
-		for (const auto& artist : artists) {
+					QDir::NoSort);
+		/* Sort list */
+		std::sort(artists.begin(), artists.end(),
+			  [&](const QString& s1, const QString& s2)
+			  { return coll.compare(s1, s2) < 0; });
+		for (const auto &artist : artists) {
 			artist_dir.setPath(path + "/" + artist);
 			albums = artist_dir.entryList(QDir::Dirs |
 						      QDir::NoDotAndDotDot,
-						      QDir::Name);
+						      QDir::NoSort);
+			/* Sort the albums (naturally) */
+			std::sort(albums.begin(), albums.end(),
+				  [&](const QString& s1, const QString& s2)
+				  { return coll.compare(s1, s2) < 0; });
 			if (albums.size() == 0) {
 				/* No albums */
 				continue;
@@ -55,8 +68,12 @@ Collection::Collection(QString artist, QDir dir) :
 		artist_dir.setPath(path);
 		albums = artist_dir.entryList(QDir::Dirs |
 					      QDir::NoDotAndDotDot,
-					      QDir::Name);
-		for (const auto& album : albums) {
+					      QDir::NoSort);
+		/* Sort list */
+		std::sort(albums.begin(), albums.end(),
+			  [&](const QString& s1, const QString& s2)
+			  { return coll.compare(s1, s2) < 0; });
+		for (const auto &album : albums) {
 			album_dir.setPath(path + "/" + album);
 			add_item(new Album(artist, album, album_dir));
 		}
